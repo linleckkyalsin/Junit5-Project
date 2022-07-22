@@ -65,5 +65,25 @@ class StudentServiceTest {
         ;
         verify(studentRepository,never()).save(any());
     }
+//if(!studentRepository.existsById(studentId)) {
+//        throw new StudentNotFoundException(
+//                "Student with id " + studentId + " does not exists");
+//    }
+//        studentRepository.deleteById(studentId);
+    @Test
+
+    void canDeleteStudent() {
+        long studentId=1;
+        given(studentRepository.existsById(studentId)).willReturn(true);
+        underTest.deleteStudent(studentId);
+        verify(studentRepository).deleteById(studentId);
+    }
+    @Test
+    void throwWhenStudentNotFound(){
+        long studentId=1;
+        given(studentRepository.existsById(studentId)).willReturn(false);
+        assertThatThrownBy(()->underTest.deleteStudent(studentId)).isInstanceOf(StudentNotFoundException.class).hasMessageContaining("Student with id " + studentId + " does not exists");
+        verify(studentRepository,never()).deleteById(any());
+    }
 
 }
